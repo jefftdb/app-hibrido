@@ -93,6 +93,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 50,
+    opacity: 0.3
   },
   buttonTake: {
     position: "absolute",
@@ -105,6 +106,7 @@ const styles = StyleSheet.create({
     width: 50,
     height: 50,
     borderRadius: 50,
+    opacity: 0.3
   },
   text: {
     fontSize: 18,

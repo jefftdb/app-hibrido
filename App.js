@@ -7,18 +7,10 @@ import { NavigationContainer } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
 import Camera from "./components/camera";
 import Galeria from "./components/galeria";
+import Mapa from "./components/mapa";
 
 
 const Tab = createBottomTabNavigator();
-
-function HomeScreen() {
-  return (
-    <View style={styles.screen}>
-      <Text>🏠 Tela Inicial</Text>
-    </View>
-  );
-}
-
 
 function TelaSegura({ onLogout }) {
   const [access, setAccess] = useState(false);
@@ -33,7 +25,6 @@ function TelaSegura({ onLogout }) {
 
   const signOut = () => {
     onLogout();
-    setAccess(false);
     
   };
 
@@ -43,7 +34,7 @@ function TelaSegura({ onLogout }) {
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size }) => {
             let iconName;
-            if (route.name === "Inicio") iconName = "home";           
+            if (route.name === "Mapa") iconName = "map-outline";           
             else if (route.name === "Galeria") iconName = "images";
             else if (route.name === "Câmera") iconName = "camera";
             else if (route.name === "Sair") iconName = "log-out";
@@ -54,7 +45,7 @@ function TelaSegura({ onLogout }) {
           tabBarInactiveTintColor: "gray",
         })}
       >
-        <Tab.Screen name="Inicio" component={HomeScreen} />
+        <Tab.Screen name="Mapa" component={Mapa} />
         <Tab.Screen name="Câmera" component={Camera} />
         <Tab.Screen name="Galeria" component={Galeria} />
         <Tab.Screen name="Sair" component={signOut} />
