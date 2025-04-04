@@ -1,42 +1,27 @@
 import { StatusBar } from "expo-status-bar";
-import { StyleSheet, Text, View, TouchableOpacity, Image, FlatList } from "react-native";
+import { StyleSheet, Text, View, TouchableOpacity, Image } from "react-native";
 import * as LocalAuthentication from "expo-local-authentication";
 import { useEffect, useState } from "react";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { NavigationContainer } from "@react-navigation/native";
 import { Ionicons } from "@expo/vector-icons";
-import Camera from "./components/camera";
-import Galeria from "./components/galeria";
-import Mapa from "./components/mapa";
-
+import RegisterScreen, { RegistraProtocolo } from "./components/registraProtocolo";
+import { ListaProtocolos } from "./components/listaProtocolos";
+import { Inicio } from "./components/inicio";
 
 const Tab = createBottomTabNavigator();
 
+// Tela Segura (com abas)
 function TelaSegura({ onLogout }) {
-  const [access, setAccess] = useState(false);
-  
-
-  useEffect(() => {
-    (async () => {
-      const authentication = await LocalAuthentication.authenticateAsync();
-      setAccess(authentication.success);
-    })();
-  }, []);
-
-  const signOut = () => {
-    onLogout();
-    
-  };
-
   return (
     <View style={{ flex: 1 }}>
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size }) => {
             let iconName;
-            if (route.name === "Mapa") iconName = "map-outline";           
-            else if (route.name === "Galeria") iconName = "images";
-            else if (route.name === "Câmera") iconName = "camera";
+            if (route.name === "Registrar") iconName = "document-text-outline";
+            else if(route.name === "Inicio") iconName = "home-outline"
+            else if (route.name === "Protocolos") iconName = "list-outline";
             else if (route.name === "Sair") iconName = "log-out";
 
             return <Ionicons name={iconName} size={size} color={color} />;
@@ -44,29 +29,34 @@ function TelaSegura({ onLogout }) {
           tabBarActiveTintColor: "blue",
           tabBarInactiveTintColor: "gray",
         })}
-      >
-        <Tab.Screen name="Mapa" component={Mapa} />
-        <Tab.Screen name="Câmera" component={Camera} />
-        <Tab.Screen name="Galeria" component={Galeria} />
-        <Tab.Screen name="Sair" component={signOut} />
+      > 
+        <Tab.Screen name="Inicio" component={Inicio} />
+        <Tab.Screen name="Registrar" component={RegistraProtocolo} />
+        <Tab.Screen name="Protocolos" component={ListaProtocolos} />
+        <Tab.Screen name="Sair">
+          {() => <LogoutScreen onLogout={onLogout} />}
+        </Tab.Screen>
       </Tab.Navigator>
     </View>
   );
 }
 
 
-function Button({ labelButton, onPress }) {
+function LogoutScreen({ onLogout }) {
   return (
-    <TouchableOpacity onPress={onPress} style={styles.button}>
-      <Text style={{ color: "white" }}>{labelButton}</Text>
-    </TouchableOpacity>
+    <View style={styles.screen}>
+      <Text>Tem certeza que deseja sair?</Text>
+      <TouchableOpacity style={styles.button} onPress={onLogout}>
+        <Text style={{ color: "white" }}>Sim</Text>
+      </TouchableOpacity>
+    </View>
   );
 }
+
 
 export default function App() {
   const [biometria, setBiometria] = useState(false);
   const [render, setRender] = useState(false);
-  
 
   useEffect(() => {
     (async () => {
@@ -74,6 +64,13 @@ export default function App() {
       setBiometria(compativel);
     })();
   }, []);
+
+  const autenticar = async () => {
+    const authentication = await LocalAuthentication.authenticateAsync();
+    if (authentication.success) {
+      setRender(true);
+    }
+  };
 
   return (
     <NavigationContainer>
@@ -84,7 +81,7 @@ export default function App() {
           <Text>
             {biometria ? "Faça o login com biometria" : "Dispositivo não compatível com biometria"}
           </Text>
-          <TouchableOpacity onPress={() => setRender(true)}>
+          <TouchableOpacity onPress={autenticar}>
             <Image source={require("./assets/digital.png")} style={styles.img} />
           </TouchableOpacity>
           <StatusBar style="auto" />
